@@ -11,18 +11,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-Russell %>%
+Russell_Index %>%
   ggplot(aes(x = ymd(Date), y = Open))+
   geom_line()
 ```
 
 ```{r}
-spdata <- spdata %>%
+spdata <- S_P_500_Data %>%
   mutate(name = "sp")
 ```
 
 ```{r}
-Russell <- Russell %>%
+Russell <- Russell_Index %>%
   mutate(name = "russ")
 ```
 
