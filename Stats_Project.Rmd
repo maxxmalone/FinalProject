@@ -6,15 +6,15 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(echo = TRUE)
 ```
-
 
 ```{r}
-Russell_Index %>%
-  ggplot(aes(x = ymd(Date), y = Open))+
-  geom_line()
+library(readr)
+library(tidyverse)
+library(lubridate)
 ```
+
 
 ```{r}
 spdata <- S_P_500_Data %>%
@@ -22,10 +22,18 @@ spdata <- S_P_500_Data %>%
 ```
 
 ```{r}
-Russell <- Russell_Index %>%
+Russell <- Russel_Index %>%
   mutate(name = "russ")
 ```
 
+```{r}
+tenyr_note <- X10yr_note 
+```
+
+```{r}
+tenyr_note <-tenyr_note %>% 
+  mutate(close = as.numeric(gsub("[\\%,]", "", Close)))
+```
 
 ```{r}
 both <- spdata %>%
@@ -42,7 +50,19 @@ both <- spdata %>%
 
 ```{r}
 both %>%
-  ggplot(aes(x = ymd(Date), y = Close, color = Index))+
-  geom_line()
+  ggplot(aes(x = mdy(Date), y = Close, color = Index))+
+  geom_line() +
+  theme_minimal()+
+  labs(title = "Large Cap vs Small Cap Data", x = "", y = "", color ="", caption = "The Black line represents COVID Shutdown") + 
+  geom_vline(xintercept = ymd("2020-03-09"))
   
 ```
+
+```{r}
+tenyr_note %>%
+  ggplot(aes(x= mdy(Date), y = close))+
+  geom_line(color = "darkgreen")+
+  theme_minimal()+
+  labs(title = "Treasury Note Interest Rate", x = "", y = "", color = "")
+```
+
