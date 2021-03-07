@@ -15,6 +15,7 @@ Russell %>%
   ggplot(aes(x = ymd(Date), y = Open))+
   geom_line()
 ```
+
 ```{r}
 spdata <- spdata %>%
   mutate(name = "sp")
