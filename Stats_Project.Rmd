@@ -65,4 +65,16 @@ tenyr_note %>%
   theme_minimal()+
   labs(title = "Treasury Note Interest Rate", x = "", y = "", color = "")
 ```
+```{r}
+percent_both<- both %>% 
+  mutate(percent = Close/(if_else(Index == "spclose", 3257.85,1666.77))-1)
+```
 
+```{r}
+percent_both %>% 
+  ggplot(aes(x = mdy(Date), y = percent, color = Index)) +
+  geom_line() +
+  theme_minimal() +
+  geom_hline(yintercept = 0.0) +
+  geom_point(aes(x = mdy(12/4/20), y = 0.13544822))
+```
