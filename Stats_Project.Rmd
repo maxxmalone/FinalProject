@@ -1,5 +1,5 @@
 ---
-title: "Stats_Project"
+title: "Affect of Covid-19 on the U.S. Stock Market"
 author: "Nathan Gottlieb"
 date: "3/7/2021"
 output: html_document
@@ -9,10 +9,68 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+COVID-19 has changed every aspect of life for the past year. Life as we knew it has changed in every aspect. The first thing people think of when they hear COVID-19 is the millions of lives lost worldwide, however, COVID-19 not only caused a public health crisis but an economic crisis as well. This leads us to our area of research for this project. For our research, we decided to study how the economic crisis in the United States has affected the stock market.
+
+
+
 ```{r}
 library(readr)
 library(tidyverse)
 library(lubridate)
+library(plotly)
+```
+
+
+Covid-19 has changed every aspect of life for the past year. Life as we knew it has changed in every aspect. The first thing people think of when they hear Covid-19 is the millions of lives lost worldwide, however, Covid-19 not only caused a public health crisis but an economic crisis as well. This leads us to our area of research for this project. For our research, we decided to study how the economic crisis in the United States has affected the stock market.
+
+The stock market is a very broad topic so we broke down our research using a couple different research questions. 
+
+How has COVID-19 affected the stock market as a whole?
+
+For this question, we have decided to use the S&P 500 as a general consensus of how the overall stock market is doing in the United States. The S&P 500 is an index that measures the performance of 500 large companies  (or Large-cap companies) listed on the stock exchange in the United States. This index however does not take into account smaller companies so that brings us to our next question.
+
+How has COVID-19 affected the S&P 500 compared to the Russell 2000 index?
+
+The Russel 2000 is an index that consists of 2000 small-cap companies. The Russell 2000 is a benchmark for how small-cap stocks are doing in the United States.
+
+What is the VIX Index and why is it important during a pandemic?
+
+Is a popular measure of the stock markets expectations of volatility based on the S&P 500. This means that as the index rises, there is more uncertainty from investors. 
+
+Are there any other factors that can impact the stock market?
+
+An important factor is interest rates. The 10-year U.S. Treasury Yield is the benchmark for interest rates in the United States. The yield is paid by the United States government as interest for borrowing money by selling the bond. This investment is seen as a safe investment as it is backed by the U.S. government. 
+
+Another factor would be stimulus packages. Donald Trump signed a $2 trillion economic stimulus package called the CARES act.With people receiving stimulus packages, people were encouraged to invest their money.
+
+How has the 10-year U.S. Treasury Yield changed during the COVID-19 pandemic?
+
+The 10-year U.S. Treasury Yield is regulated by the Federal Reserve. Interest rates are determined by the supply and demand for credit. If there is an increase in demand for money or credit then interest rates will increase. A decrease in the demand for credit will decrease the rate. However if there is an increase in the supply for money or credit then interest rates will decrease while a decrease in the supply will increase them. 
+
+
+
+```{r}
+S_P_500_Data <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/S%26P%20500%20Data.csv")
+
+Russel_Index <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/Russel%202000%20Small%20Cap.csv")
+
+X10_year_yield <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/10%20year%20yield.csv")
+
+VGT_Tech_ETF <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/VGT%20Tech%20ETF.csv")
+
+VGT_Tech_ETF_10_1 <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/VGT%20Tech%20ETF%2010%3A1.csv")
+
+AWAY_Travel_ETF <-read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/AWAY%20Travel%20ETF.csv")
+
+AWAY_Travel_ETF_10_1 <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/AWAY%20Travel%20ETF%2010%3A1.csv")
+
+JETS_Airplane_ETF <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/JETS%20Airplane%20ETF.csv")
+
+JETS_Airplane_ETF_10_1 <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/JETS%20Airplane%20ETF%2010%3A1.csv")
+
+VIX_Volitility_Index <- read_csv("https://raw.githubusercontent.com/maxxmalone/FinalProject/main/VIX%20Volitility%20Index.csv")
+
 ```
 
 
@@ -39,9 +97,9 @@ tenyr_note <-tenyr_note %>%
 both <- spdata %>%
   left_join(Russell,
             by = c("Date" = "Date" )) %>%
-  mutate(spclose = Close.x )%>%
-  mutate(russclose = Close.y) %>%
-  select(Date, spclose, russclose) %>%
+  mutate(SP500 = Close.x )%>%
+  mutate(Russell = Close.y) %>%
+  select(Date,SP500, Russell) %>%
   pivot_longer(cols = -Date,
                names_to = "Index" ,
              values_to = "Close") 
@@ -53,10 +111,53 @@ both %>%
   ggplot(aes(x = mdy(Date), y = Close, color = Index))+
   geom_line() +
   theme_minimal()+
-  labs(title = "Large Cap vs Small Cap Data", x = "", y = "", color ="", caption = "The Black line represents COVID Shutdown") + 
-  geom_vline(xintercept = ymd("2020-03-09"))
-  
+  labs(title = "Large Cap vs Small Cap Data", x = "", y = "") + 
+  geom_vline(xintercept = ymd("2020-03-11")) +
+  annotate(geom = "label",x = as.Date("2020-05-05"), y = 2000, label = "COVID-19 Declared A Pandemic")
+
 ```
+
+
+In this graph, we are able to see how the S&P 500 index is doing along with the Russell 2000 index. As described above the S&P 500 is a popular measure of how the overall stock market is doing in the United States while the Russell 2000 is a popular measure of how small-cap companies are doing in the United States. Before the fear that COVID-19 would affect our everyday lives in the United States, the S&P 500 closed at 3386.15 on 2/19/2020, while the Russell 2000 saw a high of 1696.07 on 2/20/2020. Both quickly fell as cases spread quickly across the United States. On this graph, we have the date 3/11/2020 marked as it is when WHO declared COVID-19 a pandemic. We can see from the time Covid began spreading in the United States to the time COVID-19 was declared a pandemic that the S&P 500 and Russell 2000 pulled back significantly. The S&P 500 eventually reached a low in 2020 of 2237.40 on 3/23/2020, while the Russell 2000 saw a low of 991.16 on 3/18/2020. This graph is a great representation as to the effect that COVID-19 had on the stock market, however it does not show the magnitude of returns investors had. That brings us to our next graph which shows the return on investment for both the S&P 500 and Russell 2000.
+
+
+```{r}
+percent_both<- both %>% 
+  mutate(percent = Close/(if_else(Index == "SP500", 3257.85,1666.77))-1)
+```
+
+
+```{r}
+both_graph<-percent_both %>% 
+  ggplot(aes(x = mdy(Date), y = percent, color = Index)) +
+  geom_line() +
+  theme_minimal() +
+  geom_hline(yintercept = 0.0) +
+  geom_point(aes(x = as.Date("2020-12-4"), y = 0.135448225), color = "black")+
+  annotate(geom = "text", x = as.Date("2020-12-01"), y = .138, label = "Russell Overtakes SP500",hjust = "right") +
+  labs(title = "Percent Change Since January 1st 2020", x ="", y = "")
+
+ggplotly(both_graph)
+```
+
+
+Much like the last graph which showed how COVID-19 has affected the price of the S&P 500 index and Russell 2000 index, this graph shows a V-shaped dip for both indexes. What this graph shows us is that the last graph doesn’t is how the S&P 500 fell to a low of -31.32% return on investment on 3/23/2020 compared to the Russell 2000 return on investment falling to -40.53% on 3/18/2020. This information is based on an initial investment taking place on 1/2/2020 (Market closed on 1/1/2020). We can also see that the S&P 500 recovers a lot quicker, as an investor will see their initial investment on 1/2/2020, recover in full by 7/22/2020 while the Russell 2000 does not recover in full til 11/09/2020. We are also able to see that although an investment in the Russell 2000 took longer to recover that eventually your investment would see higher returns than that of the S&P 500. This takes place at the black dot on the graph. On 12/04/2020 the Russell 2000 index overtook the S&P 500. As of 3/04/2021 an initial investment on 1/2/2020 would be up 28.8% in the Russell 2000, while only up 15.67% in the S&P 500.
+
+
+```{r}
+VIX_Volitility_Index %>%
+  ggplot(aes(x= mdy(Date), y = Close))+
+  geom_line(color = "grey")+
+  theme_minimal()+
+  labs(title = "VIX Volatility Rate", x = "", y = "", color = "") +
+  geom_vline(xintercept = ymd("2020-03-11")) +
+  annotate(geom = "text",x = as.Date("2020-03-12"), y = 20, label = "COVID-19 Declared A Pandemic", hjust = "left")
+
+```
+
+
+Now unlike the last two indexes that we analyzed, the VIX index is not a long term investment, but rather an investment to hedge against future market movements. We are able to see that there was a lot of uncertainty or fear around the stock market during the first couple cases of COVID-19 in February to the time when many states went into lockdown in March and April. Knowing that this index measures uncertainty from investors or fear, it makes sense that we see a spike in this graph around the same time the S&P 500 and Russell 2000 indexes bottomed out. The VIX index saw a high on 3/16/2020 while the S&P 500 saw a low on 3/23/2020 and the Russell 2000 saw a low on 3/18/2020.
+
 
 ```{r}
 tenyr_note %>%
@@ -64,21 +165,15 @@ tenyr_note %>%
   geom_line(color = "darkgreen")+
   theme_minimal()+
   labs(title = "Treasury Note Interest Rate", x = "", y = "", color = "") +
-  geom_vline(xintercept = ymd("2020-03-09"))
-```
-```{r}
-percent_both<- both %>% 
-  mutate(percent = Close/(if_else(Index == "spclose", 3257.85,1666.77))-1)
+  geom_vline(xintercept = ymd("2020-03-11")) +
+  annotate(geom = "text",x = as.Date("2020-03-12"), y = 1.5, label = "COVID-19 Declared a Pandemic", hjust = "left")
+
+
 ```
 
-```{r}
-percent_both %>% 
-  ggplot(aes(x = mdy(Date), y = percent, color = Index)) +
-  geom_line() +
-  theme_minimal() +
-  geom_hline(yintercept = 0.0) +
-  geom_point(aes(x = as.Date("2020-12-4"), y = 0.135448225, color = "Where Russ overtook S and P"))
-```
+
+Now as for our next research question we wanted to answer how has the 10-year U.S. Treasury Yield changed during the COVID-19 pandemic? We can see that around the period when COVID-19 was declared a pandemic by WHO that the Federal Reserve Decreased, that the 10-year treasury note yield had fallen to 0.57% compared to the pre-pandemic 1.88% on 01/02/2020. By doing this the Federal Reserve was trying to influence investors to seek higher returns in the stock market rather than the low bond yields. The low bond yields also mean that debt is cheaper, therefore taking out loans is cheaper whether this be for a business or buying a home. Overall, this was done to try and stimulate the economy. Recently we can see that the 10-year treasury note yield has risen. The impact of this is that now people are transitioning back to their pre-COVID portfolios by taking money out of stocks and diversifying their portfolios more. Now if you look at the last two months of this treasury yield graph and the first graph with the S&P 500 and Russell 2000 graph. Since the Federal Reserve has increased rates, there has been a pullback in the market which makes sense due to the information described above in this paragraph. 
+
 
 ```{r}
 VGT_JETS <- VGT_Tech_ETF %>%
@@ -94,25 +189,26 @@ VGT_JETS <- VGT_Tech_ETF %>%
              values_to = "Close") 
 ```
 
+
 ```{r}
 percent_sectors<- VGT_JETS %>% 
   mutate(percent = Close/(if_else(Index == "Tech", 249.34,if_else(Index == "Airlines", 31.85, 24.82)))-1)
 ```
 ```{r}
-percent_sectors %>% 
+p_graph <- percent_sectors %>% 
   ggplot(aes(x = mdy(Date), y = percent, color = Index)) +
   geom_line() +
   theme_minimal() +
-  geom_vline(xintercept = ymd("2020-03-09"))
+  geom_vline(xintercept = ymd("2020-03-12"))+
+  labs(title = "Percent Change by Specific Sectors", x = "", y = "", color = "Sectors") +
+  annotate(geom = "text",x = as.Date("2020-03-15"), y = .25, label = "COVID-19 Declared a Pandemic", hjust = "left")
+
+ggplotly(p_graph)
 ```
-```{r}
-VIX_Volitility_Index %>%
-  ggplot(aes(x= mdy(Date), y = Close))+
-  geom_line(color = "grey")+
-  theme_minimal()+
-  labs(title = "VIX Volatility Rate", x = "", y = "", color = "") +
-  geom_vline(xintercept = ymd("2020-03-09"))
-```
+
+
+Similarly to the S&P 500 and Russell 2000 index data we analyzed above, we wanted to analyze certain industries to see if they matched up with the overall trends of the stock market. For this graph we used the ETF VGT to represent the technology industry. As for the Airlines industry we used the ETF JETS and AWAY ETF for the travel industry. Most of the stocks in the technology industry are also represented in the S&P 500 while airlines and travel are considered smaller cap stocks. From this data we can see that the technology industry (VFT) fell to a a low of -25.50% return on investment on 3/23/2020 based on an initial investment on 1/2/2020. The airline industry (JETS) fell to a low of -61.82% return on investment on 3/19/2020 and the travel industry (AWAY) fell to a low of -52.78% return on investment on 3/18/2020. Based on our second graph we can see that like the S&P 500 the technology industry fell less than small-cap stocks. The S&P 500 fell -31.32% compared to VGT's -25.50%. As for AWAY and JETS, they fell a lot more compared to other small-cap companies or the Russell 2000 as a whole. The Russell 2000 fell -40.53% while airlines (-61.82%) and travel (-52.78%) fell more. Airlines and travel industries would be affected more than other industries due to the fact that states went on lockdowns prohibiting people from traveling. For investors, they saw their investment back in full on 5/19/2020 in the ETF VGT, while the travel ETF AWAY didn't recover in full til 12/02/2020. The airlines ETF JETS has not fully recovered. 
+
 
 ```{r}
 VGT_JETS_OCT <- VGT_Tech_ETF_10_1 %>%
@@ -137,7 +233,13 @@ percent_sectors_OCT<- VGT_JETS_OCT %>%
 percent_sectors_OCT %>% 
   ggplot(aes(x = mdy(Date), y = percent, color = Index)) +
   geom_line() +
-  theme_minimal() 
+  theme_minimal() +
+  labs(title = "Specific Sectors Percent Change Since October 1st 2020", x ="", y ="")
+
 ```
 
+
+The recovery of these stocks has changed a lot since 10/01/2020. This graph shows that an investment into the travel or airlines industry would yield returns more than twice of an investment in the technology sector. We can see that since October 1st that the technology ETF VGT is only up 15% compared to 50% for airlines (JETS) and 60% for travel (AWAY). This much like the second graph shows that smaller-cap companies have been a more profitable investment the last quarter of 2020 and early 2021. 
+
+In conclusion large-cap stocks did not fall to the same affect that small-cap stocks encountered. Large-cap stocks also recovered at a quicker rate. Although large-cap stocks were quicker to recover, their return on investment the last quarter of 2020 and early 2021 was not as significant as those of small-cap stocks. This is because since the small-cap industries have not yet recovered to pre-COVID levels, they are now just seeing the returns that large-cap stocks saw in the second and third quarters of 2020.
 
